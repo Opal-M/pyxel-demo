@@ -22,6 +22,11 @@ def walkable(x, y):
     t = pyxel.tilemap(0).get(x,y)
     return t == 0
 
+def keys_pressed(*keys):
+    for k in keys:
+        if pyxel.btnp(k, 8, 8):
+            return True
+
 class Thing:
     def __init__(self, name, x, y):
         self.name = name
@@ -76,26 +81,27 @@ class Player(Sprite):
     def __init__(self, name, x, y, t):
         super().__init__(name, x, y, t)
         self.gems = 0
+        self.compass = 'spinning'
 
-    def keys_pressed(self, *keys):
-        for k in keys:
-            if pyxel.btnp(k, 8, 8):
-                return True
-    #& move this somewhere where everyone can access it
+    
 
     def update(self):
         # which way is the controller pressed?
         # arrow keys, WASD, etc.
         cx = 0
         cy = 0
-        if self.keys_pressed(pyxel.KEY_UP, pyxel.KEY_W):
+        if keys_pressed(pyxel.KEY_UP, pyxel.KEY_W):
+            self.compass = 'north'
             cy -= 1
-        if self.keys_pressed(pyxel.KEY_DOWN, pyxel.KEY_S):
+        if keys_pressed(pyxel.KEY_DOWN, pyxel.KEY_S):
+            self.compass = 'south'
             cy += 1
-        if self.keys_pressed(pyxel.KEY_LEFT, pyxel.KEY_A):
+        if keys_pressed(pyxel.KEY_LEFT, pyxel.KEY_A):
+            self.compass = 'west'
             cx -= 1
             self.xflip = -1
-        if self.keys_pressed(pyxel.KEY_RIGHT, pyxel.KEY_D):
+        if keys_pressed(pyxel.KEY_RIGHT, pyxel.KEY_D):
+            self.compass = 'east'
             cx += 1
             self.xflip = 1
 
@@ -229,7 +235,6 @@ class App:
         #pyxel.text(1, 1, "GEMS: {}".format(self.player.gems), 7)
         pyxel.text(1, 8, "PLAYER COORDS: {},{}".format(self.player.x,self.player.y), 7)
         pyxel.text(1, 15, "CAM COORDS: {},{}".format(self.camera.x,self.camera.y), 7)
-        pyxel.text(1, 1, "LEFT: {}".format(LEFT), 7)
-        pyxel.text(1, 23, "RIGHT: {}".format(RIGHT), 7)
+        pyxel.text(1, 1, "Compass: {}".format(self.player.compass), 7)
 
 App()
